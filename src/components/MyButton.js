@@ -1,10 +1,11 @@
-import React from "react";
+const MyButton = ({ text, onClick, type }) => {
+  const btnType = ["positive", "negative", "default"].includes(type)
+    ? type
+    : "default";
 
-const MyButton = ({ text, type, onClick }) => {
-  const btnType = ["positive", "negative"].includes(type) ? type : "default";
   return (
     <button
-      className={["MyButton", `MyButton_${btnType}`].join("")}
+      className={["MyButton", `MyButton_${btnType}`].join(" ")}
       onClick={onClick}
     >
       {text}
