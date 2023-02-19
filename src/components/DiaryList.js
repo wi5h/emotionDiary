@@ -7,11 +7,12 @@ const sortOptionList = [
   { value: "latest", name: "최신순" },
   { value: "oldest", name: "오래된 순" },
 ];
+
 const filterOptionList = [
-  { value: "all", name: "전부다" },
+  { value: "all", name: "전부 다" },
   { value: "good", name: "좋은 감정만" },
   { value: "bad", name: "안좋은 감정만" },
-]; // 추가
+];
 
 const ControlMenu = ({ value, onChange, optionList }) => {
   return (
@@ -32,17 +33,17 @@ const ControlMenu = ({ value, onChange, optionList }) => {
 const DiaryList = ({ diaryList }) => {
   const navigate = useNavigate();
 
-  const [sortType, setSortType] = useState("lastest");
-  const [filter, setFilter] = useState("all"); //추가
+  const [sortType, setSortType] = useState("latest");
+  const [filter, setFilter] = useState("all");
 
-  const getProcessedDiaryList = () => {
+  const getProcessDiaryList = () => {
     const filterCallback = (item) => {
       if (filter === "good") {
         return parseInt(item.emotion) <= 3;
       } else {
         return parseInt(item.emotion) > 3;
       }
-    }; // 추가
+    };
 
     const compare = (a, b) => {
       if (sortType === "latest") {
@@ -51,8 +52,8 @@ const DiaryList = ({ diaryList }) => {
         return parseInt(a.date) - parseInt(b.date);
       }
     };
-
     const copyList = JSON.parse(JSON.stringify(diaryList));
+    // stringify로 문자열로 바뀐 것을 parse로 다시 배열로 변환
 
     const filteredList =
       filter === "all" ? copyList : copyList.filter((it) => filterCallback(it));
@@ -63,8 +64,8 @@ const DiaryList = ({ diaryList }) => {
 
   return (
     <div className="DiaryList">
-      <div className="menu_wrapper">
-        <div className="left_col">
+      <div className="menu-wrapper">
+        <div className="left-col">
           <ControlMenu
             value={sortType}
             onChange={setSortType}
@@ -76,23 +77,21 @@ const DiaryList = ({ diaryList }) => {
             optionList={filterOptionList}
           />
         </div>
-        <div className="right_col">
+        <div className="right-col">
           <MyButton
-            text={"새 일기쓰기"}
             type={"positive"}
+            text={"새 일기쓰기"}
             onClick={() => navigate("/new")}
           />
         </div>
       </div>
-      {getProcessedDiaryList().map((it) => (
-        <DiaryItem key={it.id} {...it} /> // <- 변경
+      {getProcessDiaryList().map((it) => (
+        <DiaryItem key={it.id} {...it} />
       ))}
     </div>
   );
 };
-
 DiaryList.defaultProps = {
   diaryList: [],
 };
-
 export default DiaryList;
