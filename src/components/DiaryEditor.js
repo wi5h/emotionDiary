@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DiaryDispatchContext } from "./../App";
 
@@ -17,11 +17,11 @@ const DiaryEditor = ({ isEdit, originData }) => {
   //기본 선택 감정 3번감정
   const [date, setDate] = useState(getStringDate(new Date()));
 
-  const { onCreate, onEdit } = useContext(DiaryDispatchContext);
+  const { onCreate, onEdit, onRemove } = useContext(DiaryDispatchContext);
 
-  const handleClickEmote = (emotion) => {
+  const handleClickEmote = useCallback((emotion) => {
     setEmotion(emotion); // 클릭한 감정(emotion_id)으로 state 변경
-  };
+  });
   const navigate = useNavigate();
 
   const handleSubmit = () => {
@@ -44,6 +44,13 @@ const DiaryEditor = ({ isEdit, originData }) => {
     navigate("/", { replace: true }); // 일기 작성 후, 뒤로가기로 다시 못돌아오게 함
   };
 
+  const handleRemove = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      onRemove(originData.id);
+      navigate("/", { replace: true });
+    }
+  };
+
   useEffect(() => {
     if (isEdit) {
       // new에서 렌더하는 DiaryEditor가 아니라 Edit에서 렌더하는 DiaryEditor
@@ -60,7 +67,15 @@ const DiaryEditor = ({ isEdit, originData }) => {
         leftChild={
           <MyButton text={"< 뒤로가기"} onClick={() => navigate(-1)} />
         }
-        // useNavigate로 뒤로가기 이동
+        rightChild={
+          isEdit && (
+            <MyButton
+              text={"삭제하기"}
+              type={"negative"}
+              onClick={handleRemove}
+            />
+          )
+        }
       />
       <div>
         <section>
